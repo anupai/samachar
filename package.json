@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "botbuilder": "^3.8.4",
+    "node-bing-api": "^3.2.1",
     "restify": "^5.0.0"
   }
 }
