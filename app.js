@@ -24,64 +24,75 @@ var bot = new builder.UniversalBot(connector, function (session) {
     let localtime = new Date(session.message.localTimestamp);
     let wishingMsg = localtime.getHours() < 12 ? 'Good Morning!!! <ss type =\"coffee\">;)</ss> <ss type =\"sun\">;)</ss>' :
         (localtime.getHours() < 17 ? 'Good Afternoon!!' : 'Good Evening!!');
-
-    if (session.message.text.toLowerCase().indexOf('hi') > -1 ||
-        session.message.text.toLowerCase().indexOf('hello') > -1) {
-        session.send(wishingMsg + ' What can I do for you today!!!');
-        // Bing.news("Headlines", {
-        //     count: 10,  // Number of results (max 15)
-        //    // offset: 3   // Skip first 3 results
-        // }, (error, res, body) => {
-        //     console.log(body.value);
-        //     body.value.forEach((news) => {
-        //         session.send(`<a href='${news.url}'>${news.name}</a>`);
-        //     });
-        // });
-    //    builder.Prompts.time(session, "Please provide a reservation date and time (e.g.: June 6th at 5pm)");
-session.send(new builder.Message(session).addAttachment({
-     contentType: "application/vnd.microsoft.card.adaptive",
-     content: {
-    "type": "AdaptiveCard",
-    "version": "0.5",
     
-     "actions": [
-           
-        {
-                "type": "Action.Submit",
-                "title": "General News",
-                "data": {"postback" : "General News"}
-            },
-             {
-               "type": "Action.Submit",
-                "title": "Trending News",
-                "data": {"postback" : "Trending News"}
+    if (session.message.value) {
+        console.log(session.message.value);
+        getnews(session.message.value.postback, session);
+    } else if (session.message.text && (session.message.text.toLowerCase().indexOf('hi') > -1 ||
+        session.message.text.toLowerCase().indexOf('hello') > -1)) {
+        session.send(wishingMsg + ' What can I do for you today!!!');
+        session.send(new builder.Message(session).addAttachment({
+            contentType: "application/vnd.microsoft.card.adaptive",
+            content: {
+                "type": "AdaptiveCard",
+                "version": "0.5",
 
-            },
-             {
-                "type": "Action.Submit",
-                "title": "Sports",
-                "data": {"postback" : "Sports"}
+                "actions": [
 
-            },
-            {
-                "type": "Action.Submit",
-                "title": "Weather",
-                "data": {"postback" : "Weather"}
+                    {
+                        "type": "Action.Submit",
+                        "title": "General News",
+                        "data": { "postback": "Headlines" }
+                    },
+                    {
+                        "type": "Action.Submit",
+                        "title": "Trending News",
+                        "data": { "postback": "trendingtopics" }
+
+                    },
+                    {
+                        "type": "Action.Submit",
+                        "title": "Sports",
+                        "data": { "postback": "sports" }
+
+                    },
+                    {
+                        "type": "Action.Submit",
+                        "title": "Weather",
+                        "data": { "postback": "weather" }
+
+                    }
+                ],
+
+                body: [{
+                    "type": "TextBlock",
+                    "text": "For others, '@news : <search topic>'",
+                    "size": "large",
+                    "weight":"bolder"
+                }]
+
 
             }
-        ],
+        }));
 
-     body: [       {
-                "type": "Input.Text",
-                "id" : "Search",
-                "placeholder" : "Others"
-            }]
-
-
-}
-  }));
-
-} else {
+    } else if (session.message.text && session.message.text.indexOf('@news') > -1){
+        console.log(session.message.text);
+        getnews(session.message.text.substring(session.message.text.indexOf(':')+1, session.message.text.length),session);
+    } 
+    else {
         session.send("You said: %s", session.message.text);
     }
 });
+
+function getnews(topic, session) {
+    console.log('topic:',topic);
+    Bing.news(topic, {
+        count: 5,  // Number of results (max 15)
+        // offset: 3   // Skip first 3 results
+    }, (error, res, body) => {
+        console.log(body.value);
+        body.value.forEach((news) => {
+            session.send(`<a href='${news.url}'>${news.name}</a>`);
+        });
+    });
+}
