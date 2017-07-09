@@ -47,7 +47,7 @@ var bot = new builder.UniversalBot(connector, function (session) {
                     {
                         "type": "Action.Submit",
                         "title": "Trending News",
-                        "data": { "postback": "trendingtopics" }
+                        "data": { "postback": "TrendingTopics" }
 
                     },
                     {
