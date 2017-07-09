@@ -28,19 +28,60 @@ var bot = new builder.UniversalBot(connector, function (session) {
     if (session.message.text.toLowerCase().indexOf('hi') > -1 ||
         session.message.text.toLowerCase().indexOf('hello') > -1) {
         session.send(wishingMsg + ' What can I do for you today!!!');
-        Bing.news("Headlines", {
-            count: 10,  // Number of results (max 15)
-           // offset: 3   // Skip first 3 results
-        }, (error, res, body) => {
-            console.log(body.value);
-            body.value.forEach((news) => {
-                session.send(`<a href='${news.url}'>${news.name}</a>`);
-            });
-        });
+        // Bing.news("Headlines", {
+        //     count: 10,  // Number of results (max 15)
+        //    // offset: 3   // Skip first 3 results
+        // }, (error, res, body) => {
+        //     console.log(body.value);
+        //     body.value.forEach((news) => {
+        //         session.send(`<a href='${news.url}'>${news.name}</a>`);
+        //     });
+        // });
+    //    builder.Prompts.time(session, "Please provide a reservation date and time (e.g.: June 6th at 5pm)");
+session.send(new builder.Message(session).addAttachment({
+     contentType: "application/vnd.microsoft.card.adaptive",
+     content: {
+    "type": "AdaptiveCard",
+    "version": "0.5",
+    
+     "actions": [
+           
+        {
+                "type": "Action.Submit",
+                "title": "General News",
+                "data": {"postback" : "General News"}
+            },
+             {
+               "type": "Action.Submit",
+                "title": "Trending News",
+                "data": {"postback" : "Trending News"}
+
+            },
+             {
+                "type": "Action.Submit",
+                "title": "Sports",
+                "data": {"postback" : "Sports"}
+
+            },
+            {
+                "type": "Action.Submit",
+                "title": "Weather",
+                "data": {"postback" : "Weather"}
+
+            }
+        ],
+
+     body: [       {
+                "type": "Input.Text",
+                "id" : "Search",
+                "placeholder" : "Others"
+            }]
 
 
+}
+  }));
 
-    } else {
+} else {
         session.send("You said: %s", session.message.text);
     }
 });
