@@ -22,7 +22,7 @@ server.post('/api/messages', connector.listen());
 var bot = new builder.UniversalBot(connector, function (session) {
     console.log(session);
     let localtime = new Date(session.message.localTimestamp);
-    let wishingMsg = localtime.getHours() < 12 ? 'Good Morning!!!' :
+    let wishingMsg = localtime.getHours() < 12 ? 'Good Morning!!! <ss type =\"coffee\">;)</ss> <ss type =\"sun\">;)</ss>' :
         (localtime.getHours() < 17 ? 'Good Afternoon!!' : 'Good Evening!!');
 
     if (session.message.text.toLowerCase().indexOf('hi') > -1 ||
@@ -34,7 +34,7 @@ var bot = new builder.UniversalBot(connector, function (session) {
         }, (error, res, body) => {
             console.log(body.value);
             body.value.forEach((news) => {
-                session.send(news.name);
+                session.send(`<a href='${news.url}'>${news.name}</a>`);
             });
         });
 
